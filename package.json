@@ -17,6 +17,9 @@
     "type": "git",
     "url": "git+https://github.com/actions/typescript-action.git"
   },
+  "bugs": {
+    "url": "https://github.com/nwesterhausen/clippy-check/issues"
+  },
   "keywords": [
     "actions",
     "node",
