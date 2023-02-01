@@ -2,8 +2,9 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as github from '@actions/github'
 
-import {CheckRunner} from './check'
 import * as input from './input'
+
+import {CheckRunner} from './check'
 import {Err, Ok, Result} from './result'
 
 async function version(cmd: string, args?: string[]): Promise<string> {
