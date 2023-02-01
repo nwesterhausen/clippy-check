@@ -6,7 +6,7 @@ specifiers:
   '@actions/github': ^5.0.0
   '@types/node': ^18.11.0
   '@typescript-eslint/parser': ^4.33.0
-  '@vercel/ncc': ^0.31.1
+  '@vercel/ncc': ^0.36.0
   eslint: ^7.32.0
   eslint-plugin-github: ^4.3.2
   eslint-plugin-jest: ^25.3.2
@@ -26,7 +26,7 @@ dependencies:
 devDependencies:
   '@types/node': 18.11.18
   '@typescript-eslint/parser': 4.33.0_jofidmxrjzhj7l6vknpw5ecvfe
-  '@vercel/ncc': 0.31.1
+  '@vercel/ncc': 0.36.1
   eslint: 7.32.0
   eslint-plugin-github: 4.6.0_jofidmxrjzhj7l6vknpw5ecvfe
   eslint-plugin-jest: 25.7.0_ljqobdah26xed5awkccjerz33i
@@ -1112,8 +1112,8 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@vercel/ncc/0.31.1:
-    resolution: {integrity: sha512-g0FAxwdViI6UzsiVz5HssIHqjcPa1EHL6h+2dcJD893SoCJaGdqqgUF09xnMW6goWnnhbLvgiKlgJWrJa+7qYA==}
+  /@vercel/ncc/0.36.1:
+    resolution: {integrity: sha512-S4cL7Taa9yb5qbv+6wLgiKVZ03Qfkc4jGRuiUQMQ8HGBD5pcNRnHeYM33zBvJE4/zJGjJJ8GScB+WmTsn9mORw==}
     hasBin: true
     dev: true
 
