@@ -38,8 +38,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CheckRunner = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
-const pkg = __nccwpck_require__(306);
 const render_1 = __nccwpck_require__(9089);
+// eslint-disable-next-line import/no-commonjs, @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+const pkg = __nccwpck_require__(306);
 const USER_AGENT = `${pkg.name}/${pkg.version} (${pkg.bugs.url})`;
 class CheckRunner {
     constructor() {
@@ -49,7 +50,7 @@ class CheckRunner {
             error: 0,
             warning: 0,
             note: 0,
-            help: 0,
+            help: 0
         };
     }
     tryPush(line) {
@@ -61,7 +62,7 @@ class CheckRunner {
             core.debug('Not a JSON, ignoring it');
             return;
         }
-        if (contents.reason != 'compiler-message') {
+        if (contents.reason !== 'compiler-message') {
             core.debug(`Unexpected reason field, ignoring it: ${contents.reason}`);
             return;
         }
@@ -99,7 +100,7 @@ ${this.stats.help} help`);
             // TODO: Retries
             // TODO: Throttling
             const client = github.getOctokit(options.token, {
-                userAgent: USER_AGENT,
+                userAgent: USER_AGENT
             });
             let checkRunId;
             try {
@@ -118,7 +119,7 @@ See https://github.com/actions-rs/clippy-check/issues/2 for details.`);
                     this.dumpToStdout();
                     // So, if there were any errors, we are considering this output
                     // as failed, throwing an error will set a non-zero exit code later
-                    if (this.getConclusion() == 'failure') {
+                    if (this.getConclusion() === 'failure') {
                         throw new Error('Exiting due to clippy errors');
                     }
                     else {
@@ -145,27 +146,32 @@ See https://github.com/actions-rs/clippy-check/issues/2 for details.`);
             }
         });
     }
-    createCheck(client, options) {
+    createCheck(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    client, options) {
         return __awaiter(this, void 0, void 0, function* () {
             const response = yield client.rest.checks.create({
                 owner: options.owner,
                 repo: options.repo,
                 name: options.name,
                 head_sha: options.head_sha,
-                status: 'in_progress',
+                status: 'in_progress'
             });
             // TODO: Check for errors
             return response.data.id;
         });
     }
-    runUpdateCheck(client, checkRunId, options) {
+    runUpdateCheck(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    client, checkRunId, options) {
         return __awaiter(this, void 0, void 0, function* () {
             // Checks API allows only up to 50 annotations per request,
             // should group them into buckets
             let annotations = this.getBucket();
             while (annotations.length > 0) {
                 // Request data is mostly the same for create/update calls
-                let req = {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const req = {
                     owner: options.owner,
                     repo: options.repo,
                     name: options.name,
@@ -174,8 +180,8 @@ See https://github.com/actions-rs/clippy-check/issues/2 for details.`);
                         title: options.name,
                         summary: this.getSummary(),
                         text: this.getText(options.context),
-                        annotations: annotations,
-                    },
+                        annotations
+                    }
                 };
                 if (this.annotations.length > 0) {
                     // There will be more annotations later
@@ -197,9 +203,12 @@ See https://github.com/actions-rs/clippy-check/issues/2 for details.`);
             return;
         });
     }
-    successCheck(client, checkRunId, options) {
+    successCheck(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    client, checkRunId, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            let req = {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const req = {
                 owner: options.owner,
                 repo: options.repo,
                 name: options.name,
@@ -210,8 +219,8 @@ See https://github.com/actions-rs/clippy-check/issues/2 for details.`);
                 output: {
                     title: options.name,
                     summary: this.getSummary(),
-                    text: this.getText(options.context),
-                },
+                    text: this.getText(options.context)
+                }
             };
             // TODO: Check for errors
             yield client.rest.checks.update(req);
@@ -219,9 +228,12 @@ See https://github.com/actions-rs/clippy-check/issues/2 for details.`);
         });
     }
     /// Cancel whole check if some unhandled exception happened.
-    cancelCheck(client, checkRunId, options) {
+    cancelCheck(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    client, checkRunId, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            let req = {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const req = {
                 owner: options.owner,
                 repo: options.repo,
                 name: options.name,
@@ -232,8 +244,8 @@ See https://github.com/actions-rs/clippy-check/issues/2 for details.`);
                 output: {
                     title: options.name,
                     summary: 'Unhandled error',
-                    text: 'Check was cancelled due to unhandled error. Check the Action logs for details.',
-                },
+                    text: 'Check was cancelled due to unhandled error. Check the Action logs for details.'
+                }
             };
             // TODO: Check for errors
             yield client.rest.checks.update(req);
@@ -247,7 +259,7 @@ See https://github.com/actions-rs/clippy-check/issues/2 for details.`);
     }
     getBucket() {
         // TODO: Use slice or smth?
-        let annotations = [];
+        const annotations = [];
         while (annotations.length < 50) {
             const annotation = this.annotations.pop();
             if (annotation) {
@@ -261,7 +273,7 @@ See https://github.com/actions-rs/clippy-check/issues/2 for details.`);
         return annotations;
     }
     getSummary() {
-        let blocks = [];
+        const blocks = [];
         if (this.stats.ice > 0) {
             blocks.push(`${this.stats.ice} internal compiler error${(0, render_1.plural)(this.stats.ice)}`);
         }
@@ -303,17 +315,17 @@ See https://github.com/actions-rs/clippy-check/issues/2 for details.`);
         }
     }
     isSuccessCheck() {
-        return (this.stats.ice == 0 &&
-            this.stats.error == 0 &&
-            this.stats.warning == 0 &&
-            this.stats.note == 0 &&
-            this.stats.help == 0);
+        return (this.stats.ice === 0 &&
+            this.stats.error === 0 &&
+            this.stats.warning === 0 &&
+            this.stats.note === 0 &&
+            this.stats.help === 0);
     }
     /// Convert parsed JSON line into the GH annotation object
     ///
     /// https://developer.github.com/v3/checks/runs/#annotations-object
     static makeAnnotation(contents) {
-        const primarySpan = contents.message.spans.find(span => span.is_primary == true);
+        const primarySpan = contents.message.spans.find(span => span.is_primary === true);
         // TODO: Handle it properly
         if (null == primarySpan) {
             throw new Error('Unable to find primary span for message');
@@ -332,16 +344,16 @@ See https://github.com/actions-rs/clippy-check/issues/2 for details.`);
                 annotation_level = 'failure';
                 break;
         }
-        let annotation = {
+        const annotation = {
             path: primarySpan.file_name,
             start_line: primarySpan.line_start,
             end_line: primarySpan.line_end,
-            annotation_level: annotation_level,
+            annotation_level,
             title: contents.message.message,
-            message: contents.message.rendered,
+            message: contents.message.rendered
         };
         // Omit these parameters if `start_line` and `end_line` have different values.
-        if (primarySpan.line_start == primarySpan.line_end) {
+        if (primarySpan.line_start === primarySpan.line_end) {
             annotation.start_column = primarySpan.column_start;
             annotation.end_column = primarySpan.column_end;
         }
@@ -382,8 +394,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.get = void 0;
-const string_argv_1 = __importDefault(__nccwpck_require__(9453));
 const core = __importStar(__nccwpck_require__(2186));
+const string_argv_1 = __importDefault(__nccwpck_require__(9453));
 function get() {
     const token = core.getInput('token', { required: true });
     const options = (0, string_argv_1.default)(core.getInput('options', { required: false }));
@@ -399,7 +411,7 @@ function get() {
         allow,
         deny,
         forbid,
-        name,
+        name
     };
 }
 exports.get = get;
@@ -446,31 +458,35 @@ const core = __importStar(__nccwpck_require__(2186));
 const exec = __importStar(__nccwpck_require__(1514));
 const github = __importStar(__nccwpck_require__(5438));
 const input = __importStar(__nccwpck_require__(8657));
-const check_1 = __nccwpck_require__(7657);
 const result_1 = __nccwpck_require__(8076);
+const check_1 = __nccwpck_require__(7657);
 function version(cmd, args) {
     return __awaiter(this, void 0, void 0, function* () {
         args = args === undefined ? ['-V'] : [...args, '-V'];
         return (yield exec.getExecOutput(cmd, args, { silent: true })).stdout;
     });
 }
-function prefix(prefix, options) {
+function prefix(_prefix, options) {
     return options.flatMap(opt => [
-        prefix,
-        opt === 'warnings' ? opt : opt.startsWith('clippy::') ? opt : 'clippy::' + opt,
+        _prefix,
+        opt === 'warnings'
+            ? opt
+            : opt.startsWith('clippy::')
+                ? opt
+                : `clippy::${opt}`
     ]);
 }
 function run(actionInput) {
     return __awaiter(this, void 0, void 0, function* () {
         const startedAt = new Date().toISOString();
-        let rustcVersion = yield version('rustc');
-        let cargoVersion = yield version('cargo');
-        let clippyVersion = yield version('cargo', ['clippy']);
+        const rustcVersion = yield version('rustc');
+        const cargoVersion = yield version('cargo');
+        const clippyVersion = yield version('cargo', ['clippy']);
         const warn = prefix('--warn', actionInput.warn);
         const allow = prefix('--allow', actionInput.allow);
         const deny = prefix('--deny', actionInput.deny);
         const forbid = prefix('--forbid', actionInput.forbid);
-        let runner = new check_1.CheckRunner();
+        const runner = new check_1.CheckRunner();
         let stdErr = '';
         let clippyExitCode = 0;
         try {
@@ -483,15 +499,15 @@ function run(actionInput) {
                 ...warn,
                 ...allow,
                 ...deny,
-                ...forbid,
+                ...forbid
             ], {
                 ignoreReturnCode: true,
                 failOnStdErr: false,
                 listeners: {
                     stdline: (line) => {
                         runner.tryPush(line);
-                    },
-                },
+                    }
+                }
             });
             stdErr = execOutput.stderr;
             clippyExitCode = execOutput.exitCode;
@@ -514,8 +530,8 @@ function run(actionInput) {
             context: {
                 rustc: rustcVersion,
                 cargo: cargoVersion,
-                clippy: clippyVersion,
-            },
+                clippy: clippyVersion
+            }
         });
         if (clippyExitCode !== 0) {
             if (stdErr
@@ -552,7 +568,7 @@ main();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.plural = void 0;
 function plural(value, suffix = 's') {
-    return value == 1 ? '' : suffix;
+    return value === 1 ? '' : suffix;
 }
 exports.plural = plural;
 
@@ -583,6 +599,7 @@ class Ok {
     unwrap_err() {
         throw this.value;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     expect(_) {
         return this.value;
     }
@@ -616,6 +633,7 @@ class Err {
             throw Error(msg(this.value));
         }
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     map(_) {
         return new Err(this.value);
     }
@@ -11470,7 +11488,7 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"typescript-action","version":"0.0.0","private":true,"description":"TypeScript template action","main":"lib/main.js","scripts":{"build":"tsc","format":"prettier --write \'**/*.ts\'","format-check":"prettier --check \'**/*.ts\'","lint":"eslint src/**/*.ts","package":"ncc build --source-map --license licenses.txt","test":"jest","all":"npm run build && npm run format && npm run lint && npm run package && npm test"},"repository":{"type":"git","url":"git+https://github.com/actions/typescript-action.git"},"bugs":{"url":"https://github.com/nwesterhausen/clippy-check/issues"},"keywords":["actions","node","setup"],"author":"","license":"MIT","dependencies":{"@actions/core":"^1.10.0","@actions/exec":"^1.1.0","@actions/github":"^5.0.0","string-argv":"^0.3.1"},"devDependencies":{"@types/node":"^18.11.0","@typescript-eslint/parser":"^4.33.0","@vercel/ncc":"^0.31.1","eslint":"^7.32.0","eslint-plugin-github":"^4.3.2","eslint-plugin-jest":"^25.3.2","jest":"^27.2.5","js-yaml":"^4.1.0","prettier":"2.5.1","ts-jest":"^27.1.2","typescript":"^4.4.4"}}');
+module.exports = JSON.parse('{"name":"clippy-check","version":"1.0.0","private":true,"description":"Run clippy on rust code","main":"lib/main.js","scripts":{"build":"tsc","format":"prettier --write \'**/*.ts\'","format-check":"prettier --check \'**/*.ts\'","lint":"eslint src/**/*.ts","package":"ncc build --source-map --license licenses.txt","test":"jest --passWithNoTests","all":"npm run build && npm run format && npm run lint && npm run package && npm test"},"repository":{"type":"git","url":"git+https://github.com/nwesterhausen/clippy-check.git"},"bugs":{"url":"https://github.com/nwesterhausen/clippy-check/issues"},"keywords":["actions","node","setup"],"author":"Nicholas Westerhausen, et. al","license":"MIT","dependencies":{"@actions/core":"^1.10.0","@actions/exec":"^1.1.0","@actions/github":"^5.0.0","string-argv":"^0.3.1"},"devDependencies":{"@types/node":"^18.11.0","@typescript-eslint/parser":"^4.33.0","@vercel/ncc":"^0.31.1","eslint":"^7.32.0","eslint-plugin-github":"^4.3.2","eslint-plugin-jest":"^25.3.2","jest":"^27.2.5","js-yaml":"^4.1.0","prettier":"2.5.1","ts-jest":"^27.1.2","typescript":"^4.4.4"}}');
 
 /***/ }),
 
