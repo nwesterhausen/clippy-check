@@ -19,4 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        name: Install Clippy
+        with:
+          components: clippy
       - uses: ./
