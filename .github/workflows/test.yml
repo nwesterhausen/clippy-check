@@ -24,3 +24,5 @@ jobs:
         with:
           components: clippy
       - uses: ./
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
