@@ -4,8 +4,9 @@ import * as github from '@actions/github'
 
 import * as input from './input'
 
-import {CheckRunner} from './check'
 import {Err, Ok, Result} from './result'
+
+import {CheckRunner} from './check'
 
 async function version(cmd: string, args?: string[]): Promise<string> {
   args = args === undefined ? ['-V'] : [...args, '-V']
